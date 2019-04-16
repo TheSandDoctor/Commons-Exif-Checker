@@ -32,9 +32,6 @@ def save_edit(page, utils, text):
     site = utils[1]
     original_text = text
 
-    # print("{}".format(dry_run))
-    # code = mwparserfromhell.parse(text)
-
     if not call_home(site):
         raise ValueError("Kill switch on-wiki is false. Terminating program.")
     time = 0
@@ -83,20 +80,14 @@ def save_edit(page, utils, text):
 
 def process(page_name,site):
     image_page = site.Pages["""""" + str(page_name) + """"""]#'File:Taiwan white caterpillar2018.jpg']
-   # print(image_page)
     wikicode = mwparserfromhell.parse(image_page.text())
-    #print(wikicode)
-  #  print(page_name)
     dict_results = {}
     content_changed = False
     for template in wikicode.filter_templates():
-    #    print(template)
-        if(template.name.matches("Information") and template.has("date")):
-     #       print("E")
+        if template.name.matches("Information") and template.has("date"):
             date = template.get("date").value
-     #       print(date)
             for template in date.filter_templates():
-                if(template.name.matches("According to EXIF data") and len(template.params) == 1):
+                if template.name.matches("According to EXIF data") and len(template.params) == 1:
                     dict_results["template"] = template.params[0] # Get template date value
                     with open('Example.jpg', 'wb') as fd:
                         image_page.download(fd)
@@ -109,8 +100,7 @@ def process(page_name,site):
                     if "EXIF DateTimeOriginal" in tags:
                         dict_results["original"] = re.sub("[:]","-",str(tags["EXIF DateTimeOriginal"])[0:10])
                         print("Checking")
-                        #print(dict_results["original"])
-                        #print(dict_results["template"])
+                        # Results don't match, so original takes precedence
                         if dict_results["original"] != dict_results["template"]:
                             wikicode.replace(template,str("{{According to EXIF data|" + dict_results["original"] + "}}"))
                             content_changed = True
@@ -129,10 +119,9 @@ def run(utils):
             offset -= 1
             print("Skipped due to offset config")
             continue
-        print("Working with: " + page.name)  # + " " + str(counter))
+        print("Working with: " + page.name)
         print(number_saved)
         if number_saved < limit:
-            # counter += 1
             text = page.text()
             try:
                 save_edit(page, utils, text)
@@ -149,7 +138,6 @@ def main():
     try:
         site.login(config.get('enwiki_sandbot','username'), config.get('enwiki_sandbot', 'password'))
     except errors.LoginError as e:
-        #print(e[1]['reason'])
         print(e)
         raise ValueError("Login failed.")
     offset = 1  # must be 1 to avoid the sub category
