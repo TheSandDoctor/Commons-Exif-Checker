@@ -35,7 +35,7 @@ def save_edit(page, utils, text):
     if not call_home(site):
         raise ValueError("Kill switch on-wiki is false. Terminating program.")
     time = 0
-    edit_summary = """Corrected use of [[Template:According to Exif data]] using [[User:""" + config.get('enwiki_sandbot','username') + "| " + config.get('enwiki_sandbot','username') + """]]. Questions? [[User talk:TheSandDoctor|msg TSD!]] (please mention that this is task #1! [[Commons:Bots/Requests/TheSandBot|BRFA trial 1]])"""
+    edit_summary = """[[Commons:Bots/Requests/TheSandBot|Task 1]]: Fixed inaccurate use of [[Template:According to Exif data]]. Questions? [[User talk:TheSandDoctor|msg TSD!]]"""
     while True:
         if time == 1:
             text = site.Pages["File:" + page.page_title].text()
@@ -141,7 +141,7 @@ def main():
         print(e)
         raise ValueError("Login failed.")
     offset = 1  # must be 1 to avoid the sub category
-    limit = 1
+    limit = 2
     utils = [config,site,offset,limit]
     run(utils)
 
