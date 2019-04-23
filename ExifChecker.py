@@ -2,6 +2,8 @@
 import exifread, mwclient, mwparserfromhell, sys, re, configparser, json, pathlib
 from time import sleep
 number_saved = 0
+pages_run_set = set()
+
 
 def call_home(site_obj):
     page = site_obj.Pages['User:TheSandBot/status']
@@ -24,6 +26,23 @@ def get_valid_filename(s):
     assert(s is not "" or s is not None)
     s = str(s).strip().replace(' ', '_')
     return re.sub(r'(?u)[^-\w.]', '', s)
+
+
+def store_run_pages():
+    global pages_run_set
+    #print(pages_run_set)
+    with open("run.txt",'a+') as f:
+        for item in pages_run_set:
+            f.write('%s\n' % item)
+
+
+def load_run_pages():
+    global pages_run_set
+    print("Loading pages")
+    with open('run.txt', 'r') as f:
+        for item in f:
+            pages_run_set.add(item)
+            print("Adding " + item)
 
 
 def save_edit(page, utils, text):
@@ -114,6 +133,8 @@ def run(utils):
     offset = utils[2]
     limit = utils[3]
     global number_saved
+    global pages_run_set
+    load_run_pages()    # load previously run pages so that we can avoid re-running
     for page in site.Categories["Uploaded with Mobile/Android"]:
         if offset > 0:
             offset -= 1
@@ -124,12 +145,17 @@ def run(utils):
         if number_saved < limit:
             text = page.text()
             try:
+                if page.name in pages_run_set:
+                    print("Found duplicate, no need to check")
+                    continue
                 save_edit(page, utils, text)
+                pages_run_set.add(page.name)
+                print("Added")
             except ValueError:
                 raise
         else:
+            store_run_pages()
             return  # run out of pages in limited run
-
 
 def main():
     site = mwclient.Site(('https','commons.wikimedia.org'),'/w/')
