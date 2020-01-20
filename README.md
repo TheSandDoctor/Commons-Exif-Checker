@@ -1,0 +1,4 @@
+# Commons-Exif-Checker
+This is the [first approved](https://commons.wikimedia.org/wiki/Commons:Bots/Requests/TheSandBot) Bot Request for Approval that I received on Wikimedia Commons. Its purpose was to check for and correct erroneous dates, by extracting the right date from EXIF. It would get the files to check from [Category:Uploaded with Mobile/Android](https://commons.wikimedia.org/wiki/Category:Uploaded_with_Mobile/Android) and was per [bot request](https://commons.wikimedia.org/wiki/Special:Diff/345994298#Tool_that_corrects_erroneous_dates,_by_extracting_the_right_date_from_EXIF).
+
+The bot would only edited if it found a mismatch between "EXIF DateTimeOriginal" and the value within [Template:According to EXIF data](https://commons.wikimedia.org/wiki/Template:According_to_EXIF_data). This task was required due to a bug that existed at a time within the Wikimedia Commons Android app that would place incorrect EXIF data on the file description page.
